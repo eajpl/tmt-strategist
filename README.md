@@ -1,23 +1,47 @@
 # Observatoire TMT & Finance
 
-Site public de [tmtstrategist.com](https://tmtstrategist.com) — EXXING International.
+App complète (React + Express) extraite de Manus, nettoyée, pour [tmtstrategist.com](https://tmtstrategist.com).
 
-Refonte hors Manus : HTML/CSS/JS statique, hébergeable sur **GitHub Pages** ou tout CDN.
+Repo : [eajpl/tmt-strategist](https://github.com/eajpl/tmt-strategist)
+
+## Stack
+
+- Client : Vite 7, React 18, Tailwind 4, Wouter
+- Serveur : Express, Drizzle + SQLite (`server/db/sqlite.db`)
+- Données : `client/public/data/` (transactions TMT)
 
 ## Local
 
-Ouvrir `index.html` ou :
-
 ```bash
-python3 -m http.server 8080
+pnpm install
+pnpm dev
 ```
 
-## GitHub Pages
+Client : http://localhost:3000 — API : http://localhost:5000
 
-Settings → Pages → Source : GitHub Actions (workflow fourni).
+```bash
+pnpm build
+NODE_ENV=production pnpm start
+```
 
-Domaine : `tmtstrategist.com` (`CNAME`). Pointer le DNS A/CNAME vers GitHub Pages, plus vers `cname.manus.space`.
+## Variables
 
-## Hors périmètre (v1)
+Voir `.env.example`. Ne jamais committer `.env`.
 
-Auth Manus, Stripe, cron, SQLite, scrapers. À réintroduire plus tard en API séparée si besoin.
+## Déploiement
+
+Processus Node long (Express + cron + webhooks Stripe).  
+Cible : VPS / Railway / Fly / Render. **Pas Vercel tel quel.**
+
+1. `pnpm build`
+2. Copier `dist/` + `client/public/data` + SQLite
+3. `NODE_ENV=production node dist/index.js`
+4. Reverse proxy Nginx + TLS
+5. DNS : retirer `cname.manus.space`
+
+## Hors Manus
+
+- Plus de `vite-plugin-manus-runtime`
+- Plus d’OAuth `api.manus.im` par défaut
+- Assets locaux (`/logo-tmt-finance.png`)
+- Auth locale `/login`
